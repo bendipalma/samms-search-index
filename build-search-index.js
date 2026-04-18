@@ -114,11 +114,29 @@ async function scrapePage(url) {
         const $ = cheerio.load(html)
 
         // Prefer Open Graph when available — usually cleaner than <title>
-        const title = (
+        let title = (
             $('meta[property="og:title"]').attr("content") ||
             $("title").text() ||
             ""
         ).trim()
+
+        // Strip generic Framer suffixes
+        title = title.replace(/\s*-\s*My Framer Site$/i, "").trim()
+
+        // If the title is generic/fallback, derive a readable one from the URL slug
+        const GENERIC_TITLES = [
+            "samms | turning complexity into capacity",
+            "samms",
+            "",
+        ]
+        if (GENERIC_TITLES.includes(title.toLowerCase())) {
+            const slug = new URL(url).pathname.split("/").filter(Boolean).pop()
+            if (slug) {
+                title = slug
+                    .replace(/-/g, " ")
+                    .replace(/\b\w/g, (c) => c.toUpperCase())
+            }
+        }
 
         const description = (
             $('meta[property="og:description"]').attr("content") ||
