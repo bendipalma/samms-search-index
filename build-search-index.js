@@ -88,7 +88,17 @@ async function fetchSitemap() {
     }
     const xml = await response.text()
     const matches = xml.matchAll(/<loc>([^<]+)<\/loc>/g)
-    return [...matches].map((m) => m[1]).filter((u) => !shouldExclude(u))
+    // Rewrite URLs to use the target SITE_URL — Framer's sitemap may list
+    // a custom domain even when we're scraping the preview domain.
+    const base = new URL(SITE_URL)
+    return [...matches]
+        .map((m) => {
+            const parsed = new URL(m[1])
+            parsed.protocol = base.protocol
+            parsed.host = base.host
+            return parsed.href
+        })
+        .filter((u) => !shouldExclude(u))
 }
 
 async function scrapePage(url) {
