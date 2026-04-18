@@ -159,7 +159,7 @@ async function scrapePage(url) {
         if (!collection) return null // Skip non-CMS pages
 
         return {
-            url,
+            url: new URL(url).pathname,
             title,
             description,
             body: bodyText,
