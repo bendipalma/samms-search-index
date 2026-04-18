@@ -1,0 +1,12 @@
+{
+  "name": "samms-search-builder",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Scrapes the SAMMs Framer site to build a search-index.json for the SiteWideSearch component.",
+  "scripts": {
+    "build": "node build-search-index.js https://beautiful-changes-429467.framer.app"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
