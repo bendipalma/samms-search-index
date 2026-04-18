@@ -68,7 +68,7 @@ function classifyUrl(url) {
     for (const { pattern, label } of COLLECTION_PATTERNS) {
         if (pattern.test(pathname)) return label
     }
-    return "Pages"
+    return null // Not a CMS collection — will be excluded
 }
 
 function shouldExclude(url) {
@@ -137,12 +137,15 @@ async function scrapePage(url) {
 
         if (!title) return null
 
+        const collection = classifyUrl(url)
+        if (!collection) return null // Skip non-CMS pages
+
         return {
             url,
             title,
             description,
             body: bodyText,
-            collection: classifyUrl(url),
+            collection,
         }
     } catch (err) {
         console.warn(`  ⚠  Error fetching ${url}: ${err.message}`)
